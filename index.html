@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Academy</title>
+    <style>
+        /* CSS RESET & VARIABLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        :root {
+            --navy-blue: #0a192f;
+            --primary-blue: #172a45;
+            --emerald-green: #046a38;
+            --text-white: #ffffff;
+            --svg-click-grey: #a0aec0;
+            --emblem-grey: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--navy-blue);
+            color: var(--text-white);
+            overflow: hidden; /* Fixes screen length and width */
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* FIXED HEADER NAVIGATION */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(10,25,47,0.9), rgba(10,25,47,0));
+        }
+
+        .school-name {
+            color: var(--emerald-green);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* SVG HAMBURGER MENU BUTTON */
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .menu-btn svg line {
+            stroke: var(--text-white);
+            transition: stroke 0.1s ease;
+        }
+
+        /* Turn grey when active (clicked/held) */
+        .menu-btn:active svg line {
+            stroke: var(--svg-click-grey);
+        }
+
+        /* DROPDOWN MENU PANEL */
+        .dropdown-menu {
+            position: fixed;
+            top: -100%; /* Hidden above top edge by default */
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--navy-blue);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            transition: top 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .dropdown-menu.open {
+            top: 0;
+        }
+
+        .dropdown-menu a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-menu a:hover {
+            color: var(--svg-click-grey);
+        }
+
+        /* PAGE SCROLL CONTAINER */
+        .scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide Scrollbars while retaining native functionality */
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* VIEWPORT SNAP PANELS */
+        .page-panel {
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Alternating secondary base background color */
+        .page-panel:nth-child(even) {
+            background-color: var(--primary-blue);
+        }
+
+        /* HOME PAGE / PAMPHLET LAYOUT */
+        .home-pamphlet {
+            max-width: 600px;
+            width: 90%;
+            padding: 3rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(23, 42, 69, 0.85); /* Frosty container layout overlay */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* MOCK VECTOR EMBLEM */
+        .emblem-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .open-day-title {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .open-day-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .open-day-details {
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        /* OTHER PAGES TEXT STYLE */
+        .page-panel h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-panel p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="school-name">Mock School</div>
+        <button class="menu-btn" id="menuToggle" aria-label="Toggle Navigation Menu">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <line x1="6" y1="9" x2="26" y2="9" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="6" y1="16" x2="26" y2="16" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="6" y1="23" x2="26" y2="23" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </header>
+
+    <!-- DROPDOWN LINKS -->
+    <nav class="dropdown-menu" id="dropdownMenu">
+        <a href="#home" onclick="closeMenu()">Home</a>
+        <a href="#about" onclick="closeMenu()">About</a>
+        <a href="#newsletter" onclick="closeMenu()">Newsletter</a>
+        <a href="#enroll" onclick="closeMenu()">Enroll</a>
+        <a href="#contact" onclick="closeMenu()">Contact</a>
+        <a href="#faqs" onclick="closeMenu()">FAQs</a>
+    </nav>
+
+    <!-- EACH SECTION LOCKED TO VIEWPORT SNAP POINT -->
+    <main class="scroll-container">
+        
+        <!-- HOME PAGE -->
+        <section id="home" class="page-panel">
+            <div class="home-pamphlet">
+                <div class="emblem-container">
+                    <!-- Inline responsive SVG using your specified color scheme -->
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <!-- Navy base shield background -->
+                        <polygon points="50,5 90,25 90,65 50,95 10,65 10,25" fill="#0a192f" stroke="#ffffff" stroke-width="3"/>
+                        <!-- Grey interior dynamic ribbon layer -->
+                        <path d="M 15,35 Q 50,50 85,35 L 85,45 Q 50,60 15,45 Z" fill="#e2e8f0"/>
+                        <!-- White Accent Star element -->
+                        <polygon points="50,18 53,27 62,27 55,33 57,42 50,36 43,42 45,33 38,27 47,27" fill="#ffffff"/>
+                        <!-- Emerald Green fine detail accentuation -->
+                        <circle cx="50" cy="73" r="8" fill="#046a38" stroke="#ffffff" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <h1 class="open-day-title">Open Day</h1>
+                <div class="open-day-date">Saturday, October 10th | 09:00 AM</div>
+                <p class="open-day-details">
+                    Discover our innovative curriculum, tour our modern facilities, and meet our dedicated faculty. Shapes tomorrow's future, today. Join us live for exhibitions and parent orientation forums.
+                </p>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section id="about" class="page-panel">
+            <h2>About Us</h2>
+            <p>Founded on excellence, our mock academy delivers top-tier immersive education, engineering modern paths for global students.</p>
+        </section>
+
+        <!-- NEWSLETTER -->
+        <section id="newsletter" class="page-panel">
+            <h2>Our Newsletter</h2>
+            <p>Stay up to date with the latest school events, academic accomplishments, and seasonal announcements published every month.</p>
+        </section>
+
+        <!-- ENROLL -->
+        <section id="enroll" class="page-panel">
+            <h2>Enrollment</h2>
+            <p>Applications for the upcoming academic cycle are now open. Secure your placement and begin your registration process online.</p>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="page-panel">
+            <h2>Contact Details</h2>
+            <p>Email: admin@mockschool.edu<br>Phone: +1 (555) 019-2831<br>Location: 123 Academic Drive, Square City</p>
+        </section>
+
+        <!-- FAQS -->
+        <section id="faqs" class="page-panel">
+            <h2>Frequently Asked Questions</h2>
+            <p>Have questions about uniforms, scheduling, or sports? Visit our direct support channels or reach out to parent associations.</p>
+        </section>
+
+    </main>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        // Toggle opened class layout logic
+        menuToggle.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('open');
+        });
+
+        // Safe menu close anchor link logic execution
+        function closeMenu() {
+            dropdownMenu.classList.remove('open');
+        }
+    </script>
+</body>
+</html>
